@@ -18,7 +18,12 @@ class TestSluggifyModel(TestCase):
             dummy.slug,
             "a-weird-name-with-spaces-and-a-weird-ign"
         )
-        self.assertEqual(DummyModel.objects.count(), 1)
+        clazz = DummyModel
+        self.assertEqual(clazz.objects.count(), 1)
+        model = clazz.objects.all()[0]
+        self.assertEqual(model.slug, "a-weird-name-with-spaces-and-a-weird-ign")
+        self.assertEqual(model.name, "A weird name with spaces and a weird $ign")
+
 
     @patch.object(
         DummyModelCustomSave,
@@ -36,7 +41,11 @@ class TestSluggifyModel(TestCase):
             "a-weird-name-with-spaces-and-a-weird-ign"
         )
         self.assertEqual(dummy.date_saved, MOCKED_DATETIME)
-        self.assertEqual(DummyModelCustomSave.objects.count(), 1)
+        clazz = DummyModelCustomSave
+        self.assertEqual(clazz.objects.count(), 1)
+        model = clazz.objects.all()[0]
+        self.assertEqual(model.slug, "a-weird-name-with-spaces-and-a-weird-ign")
+        self.assertEqual(model.name, "A weird name with spaces and a weird $ign")
 
     def test_model_with_custom_name_gets_sluggified_on_save(self):
         dummy = DummyModelCustomName(
@@ -50,4 +59,8 @@ class TestSluggifyModel(TestCase):
             "a-weird-name-with-spaces-and-a-weird-ign"
         )
 
-        self.assertEqual(DummyModelCustomName.objects.count(), 1)
+        clazz = DummyModelCustomName
+        self.assertEqual(clazz.objects.count(), 1)
+        model = clazz.objects.all()[0]
+        self.assertEqual(model.slug, "a-weird-name-with-spaces-and-a-weird-ign")
+        self.assertEqual(model.nombre, "A weird name with spaces and a weird $ign")

@@ -5,16 +5,6 @@ from django.template.defaultfilters import slugify
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('sluggify_for_me',)
 
 
-class MixinProxy(models.Model):
-    def save(self, *args, **kwargs):
-        for clazz in self.__class__.__bases__:
-            if clazz != self.__class__:
-                clazz.save(self, *args, **kwargs)
-
-    class Meta:
-        abstract = True
-
-
 class SlugModel(models.Model):
     slug = models.CharField(max_length=255)
 
@@ -31,7 +21,9 @@ class SlugModel(models.Model):
         attr_name = self.__get_attr_name()
         value = getattr(self, attr_name)
         self.slug = slugify(value)
-        super(SlugModel, self).save(*args, **kwargs)
+        for clazz in self.__class__.__bases__:
+            if clazz != SlugModel:
+                clazz.save(self, *args, **kwargs)
 
     class Meta:
         abstract = True
